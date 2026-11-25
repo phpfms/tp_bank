@@ -1,0 +1,23 @@
+<Utilisateurs>
+  <utilisateur>
+    <id>99</id>
+    <nom>DIOP</nom>
+    <prenom>Mor</prenom>
+    <age>50</age>
+  </utilisateur>
+
+  <utilisateur>
+    <id>9</id>
+    <nom>BRET</nom>
+    <prenom>Martial</prenom>
+    <age>10</age>
+  </utilisateur>
+
+  <utilisateur>
+    <id>10</id>
+    <nom>RAFAEL</nom>
+    <prenom>DA SILVA</prenom>
+    <age>99</age>
+  </utilisateur>
+
+</Utilisateurs>
