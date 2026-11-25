@@ -1,0 +1,37 @@
+# --- Configuration sensible ---
+db.properties
+
+# --- Compilation ---
+*.class
+bin/
+target/
+out/
+build/
+
+# --- Eclipse ---
+.classpath
+.project
+.settings/
+.metadata/
+
+# --- IntelliJ ---
+.idea/
+*.iml
+
+# --- VS Code ---
+.vscode/
+
+# --- Système ---
+.DS_Store
+Thumbs.db
+
+# --- Logs et divers ---
+*.log
+*.tmp
+<<<<<<< HEAD
+*.baksave.classpath
+save.project
+save.*
+=======
+*.bak
+>>>>>>> 534d1d9afcd27f52ccce5e2426855057a0613ba4
