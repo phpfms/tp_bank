@@ -1,0 +1,82 @@
+@startuml
+
+class DatabaseConnection {
+    - static instance : DatabaseConnection
+    - url : String
+    - user : String
+    - password : String
+
+    + static synchronized getInstance()
+    + executeRequest()
+}
+
+class ClientDAO {
+    + creerClient()
+    + modifierClient()
+    + supprimerClient()
+    + rechercherClient()
+}
+
+class CompteDAO {
+    + creerCompte()
+    + modifierCompte()
+    + supprimerCompte()
+    + rechercherCompte()
+}
+
+class OperationDAO {
+    + creerOperation()
+    + modifierOperation()
+    + annulerOperation()
+    + rechercherOperation()
+}
+
+class Client {
+    - id : int
+    - nom : String
+    - prenom : String
+    - email : String
+}
+
+class Compte {
+    - id : int
+    - numeroDeCompte : int
+    - type : String
+    - fk_client : int
+    - solde : double
+}
+
+class Operation {
+    - id : int
+    - type : String
+    - fk_compte_initial : int
+    - fk_compte_destination : int
+    - date : Date
+    - descriptionMouvement : String
+    - montant : double
+    - monnaie : String
+    - supportMonetaire : String
+}
+
+' Relations métier
+
+Client "1" -- "*" Compte
+Compte "1" -- "*" Operation
+
+' Singleton
+
+DatabaseConnection --> DatabaseConnection : instance
+
+' DAO -> Connexion
+
+ClientDAO ..> DatabaseConnection
+CompteDAO ..> DatabaseConnection
+OperationDAO ..> DatabaseConnection
+
+' DAO -> Entités
+
+ClientDAO ..> Client
+CompteDAO ..> Compte
+OperationDAO ..> Operation
+
+@enduml

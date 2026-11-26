@@ -1,0 +1,34 @@
+@startuml GestionOperations
+
+left to right direction
+
+actor "Utilisateur" as User
+
+rectangle "TP Bank - Gestion des Opérations" {
+
+    usecase "Effectuer un dépôt" as UC1
+
+    usecase "Effectuer un retrait" as UC2
+
+    usecase "Vérifier l'existence\ndu compte" as UC3
+
+    usecase "Vérifier le solde\n disponible" as UC4
+
+    usecase "Enregistrer\n l'opération" as UC5
+
+    usecase "Refuser le retrait\n(solde insuffisant)" as UC6
+}
+
+User --> UC1
+User --> UC2
+
+UC1 .> UC3 : <<include>>
+UC1 .> UC5 : <<include>>
+
+UC2 .> UC3 : <<include>>
+UC2 .> UC4 : <<include>>
+UC2 .> UC5 : <<include>>
+
+UC6 .> UC2 : <<extend>>
+
+@enduml

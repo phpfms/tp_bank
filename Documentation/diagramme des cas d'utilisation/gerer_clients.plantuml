@@ -1,0 +1,23 @@
+@startuml GestionClients
+
+left to right direction
+
+actor "Utilisateur" as User
+
+rectangle "Gestion des Clients" {
+
+    usecase "Consulter la liste\n des clients" as UC1
+
+    usecase "Consulter les\n informations d'un client" as UC2
+
+    usecase "Consulter les\n comptes d'un client" as UC3
+
+}
+
+User --> UC1
+User --> UC2
+User --> UC3
+
+UC3 .> UC2 : <<include>>
+
+@enduml

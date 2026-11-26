@@ -1,0 +1,49 @@
+@startuml
+
+left to right direction
+
+actor Utilisateur
+
+rectangle "Gestion des Comptes" {
+
+    usecase "Choisir le type de compte" as ChoixType
+
+    usecase "Créer un compte" as Creer
+    usecase "Créer automatiquement un compte" as CreationAutomatique
+    usecase "Modifier un compte" as Modifier
+    usecase "Fermer un compte" as Fermer
+
+    usecase "Consulter un compte" as Consulter
+    
+    usecase "Sélectionner un compte" as SelectionCompte
+    usecase "Vérifier l'existence du compte" as Verifier
+    usecase "Afficher le compte" as Afficher
+    usecase "Afficher une erreur" as Erreur
+
+    Consulter .> SelectionCompte : <<include>>
+    Modifier  .> SelectionCompte : <<include>>
+    Fermer    .> SelectionCompte : <<include>>
+
+    Creer .> ChoixType : <<extend>>
+    Erreur .> Consulter : <<extend>>
+
+    Consulter .> Verifier : <<include>>
+    Consulter .> Afficher : <<include>>
+
+    CreationAutomatique .> ChoixType : <<include>>
+}
+
+Utilisateur --> Creer
+Utilisateur --> Modifier
+Utilisateur --> Fermer
+Utilisateur --> Consulter
+Utilisateur --> SelectionCompte
+
+note right of Erreur
+Si le compte n'existe pas
+end note
+
+actor "Moteur de décision" as Systeme
+Systeme --> CreationAutomatique
+
+@enduml
