@@ -60,12 +60,26 @@ class Client {
     - email : String
 }
 
-class Compte {
+abstract class Compte {
     - id : int
     - numeroDeCompte : int
-    - type : String
     - fk_client : int
     - solde : double
+    + getType() : String
+}
+
+class CompteFactory {
+    + {static} creer(type : String, numeroDeCompte : int, solde : double, fk_client : int) : Compte
+}
+
+class CompteCourant extends Compte {
+    - decouvertAutorise : double
+    + getType() : String
+}
+
+class CompteEpargne extends Compte {
+    - tauxInteret : double
+    + getType() : String
 }
 
 class Operation {
@@ -86,13 +100,18 @@ class Operation {
 Client "1" -- "0..*" Compte : possede
 Compte "1" -- "0..*" Operation : enregistre
 
+' ==================== RELATIONS FACTORY ====================
+CompteFactory ..> Compte : crée
+CompteFactory ..> CompteCourant : instancie
+CompteFactory ..> CompteEpargne : instancie
+
 ' ==================== DAO -> HANDLER ====================
-ClientDao --> ReceiveRequest : utilise
-CompteDao --> ReceiveRequest : utilise
-OperationDao --> ReceiveRequest : utilise
+ClientDao --> ReceiveRequest : instruit
+CompteDao --> ReceiveRequest : instruit
+OperationDao --> ReceiveRequest : instruit
 
 ' ==================== HANDLER -> SINGLETON ====================
-ReceiveRequest --> DatabaseConnection : getInstance().executeRequest()
+ReceiveRequest --> DatabaseConnection : passe
 
 ' ==================== DAO -> ENTITES ====================
 ClientDao ..> Client
