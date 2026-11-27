@@ -1,0 +1,121 @@
+@startuml
+
+' ==================== SINGLETON CONNEXION ====================
+class DatabaseConnection {
+    - {static} instance : DatabaseConnection
+    - url : String
+    - user : String
+    - password : String
+    - DatabaseConnection()
+    + {static} getInstance() : DatabaseConnection
+    + executeRequest(requete : String) : ResultSet
+}
+
+' ==================== INTERFACE DAO UNIQUE ====================
+interface IDao<T> {
+    + creer(entite : T) : void
+    + modifier(entite : T) : void
+    + supprimer(id : int) : void
+    + rechercher(id : int) : T
+}
+
+' ==================== CLASSE INTERMEDIAIRE ====================
+class ReceiveRequest {
+    - connection : DatabaseConnection
+    + traiter(requete : String) : ResultSet
+    - afficherRequete(requete : String) : void
+}
+
+' ==================== IMPLEMENTATIONS DAO ====================
+class ClientDao implements IDao<Client> {
+    - handler : ReceiveRequest
+    + creer(client : Client) : void
+    + modifier(client : Client) : void
+    + supprimer(id : int) : void
+    + rechercher(id : int) : Client
+}
+
+class CompteDao implements IDao<Compte> {
+    - handler : ReceiveRequest
+    + creer(compte : Compte) : void
+    + modifier(compte : Compte) : void
+    + supprimer(id : int) : void
+    + rechercher(id : int) : Compte
+}
+
+class OperationDao implements IDao<Operation> {
+    - handler : ReceiveRequest
+    + creer(operation : Operation) : void
+    + modifier(operation : Operation) : void
+    + supprimer(id : int) : void
+    + rechercher(id : int) : Operation
+    + annulerOperation(id : int) : void
+}
+
+' ==================== ENTITES ====================
+class Client {
+    - id : int
+    - nom : String
+    - prenom : String
+    - email : String
+}
+
+abstract class Compte {
+    - id : int
+    - numeroDeCompte : int
+    - fk_client : int
+    - solde : double
+    + getType() : String
+}
+
+class CompteFactory {
+    + {static} creer(type : String, numeroDeCompte : int, solde : double, fk_client : int) : Compte
+}
+
+class CompteCourant extends Compte {
+    - decouvertAutorise : double
+    + getType() : String
+}
+
+class CompteEpargne extends Compte {
+    - tauxInteret : double
+    + getType() : String
+}
+
+class Operation {
+    - id : int
+    - type : String
+    - fk_compte_initial : int
+    - fk_compte_destination : int
+    - date : Date
+    - descriptionMouvement : String
+    - montant : double
+    - monnaie : String
+    - supportMonetaire : String
+    + ajouterMontant(montant : double) : void
+    + retrancherMontant(montant : double) : void
+}
+
+' ==================== RELATIONS METIER ====================
+Client "1" -- "0..*" Compte : possede
+Compte "1" -- "0..*" Operation : enregistre
+
+' ==================== RELATIONS FACTORY ====================
+CompteFactory ..> Compte : crée
+CompteFactory ..> CompteCourant : instancie
+CompteFactory ..> CompteEpargne : instancie
+
+' ==================== DAO -> HANDLER ====================
+ClientDao --> ReceiveRequest : instruit
+CompteDao --> ReceiveRequest : instruit
+OperationDao --> ReceiveRequest : instruit
+
+' ==================== HANDLER -> SINGLETON ====================
+ReceiveRequest --> DatabaseConnection : passe
+
+' ==================== DAO -> ENTITES ====================
+ClientDao ..> Client
+CompteDao ..> Compte
+OperationDao ..> Operation
+
+@enduml

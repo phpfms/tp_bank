@@ -1,0 +1,106 @@
+================================================================================
+FICHIER : Application.java
+CHEMIN  : C:\Users\PeyrousP\OneDrive - Facylities Multi Services\Documents\design_pattern\2-exercices\tp_bank\Documentation\1-cours\PatternFactory\src\app\Application.java
+================================================================================
+
+package app;
+import connection.ConnectionFactory;
+import database.Database;
+
+public class Application {
+    public static void main(String[] args) {
+        ConnectionFactory factory = new ConnectionFactory();
+
+        // Je veux du MySQL
+        Database db = factory.CreateConnection("MYSQL");
+        db.connected(); 
+
+        // je change juste un mot ici :
+        Database db2 = factory.CreateConnection("ORACLE");
+        db2.connected();
+        
+    }
+}
+
+
+================================================================================
+FICHIER : ConnectionFactory.java
+CHEMIN  : C:\Users\PeyrousP\OneDrive - Facylities Multi Services\Documents\design_pattern\2-exercices\tp_bank\Documentation\1-cours\PatternFactory\src\connection\ConnectionFactory.java
+================================================================================
+
+package connection;
+import database.Database;
+
+public class ConnectionFactory {
+    public Database CreateConnection(String type) {
+        if (type.equalsIgnoreCase("MYSQL")) {
+            return new ConnectionMySQL();
+        } else if (type.equalsIgnoreCase("ORACLE")) {
+            return new ConnectionOracle();
+        }else
+        	throw new UnsupportedOperationException("Type de base de données non supporté : " + type);
+        
+    }
+}
+
+
+================================================================================
+FICHIER : ConnectionMySQL.java
+CHEMIN  : C:\Users\PeyrousP\OneDrive - Facylities Multi Services\Documents\design_pattern\2-exercices\tp_bank\Documentation\1-cours\PatternFactory\src\connection\ConnectionMySQL.java
+================================================================================
+
+package connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+import database.Database;
+
+public class ConnectionMySQL implements Database {
+	private String url;
+    private String user;
+    private String password;
+    
+	public void connected() {
+		this.url = "jdbc:mysql://localhost:3306/tp_bank";
+        this.user = "tp_bank";
+        this.password = "8ePP[S[uFtxpAgWd";
+        
+        try {
+			DriverManager.getConnection(url, user, password);
+			System.out.println("Connection OK !!");
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+}
+
+
+================================================================================
+FICHIER : ConnectionOracle.java
+CHEMIN  : C:\Users\PeyrousP\OneDrive - Facylities Multi Services\Documents\design_pattern\2-exercices\tp_bank\Documentation\1-cours\PatternFactory\src\connection\ConnectionOracle.java
+================================================================================
+
+package connection;
+import database.Database;
+
+public class ConnectionOracle implements Database {
+	public void connected() {
+		System.out.println("Connexion à Oracle réussie");
+	}
+}
+
+
+================================================================================
+FICHIER : Database.java
+CHEMIN  : C:\Users\PeyrousP\OneDrive - Facylities Multi Services\Documents\design_pattern\2-exercices\tp_bank\Documentation\1-cours\PatternFactory\src\database\Database.java
+================================================================================
+
+package database;
+
+public interface Database {
+	void connected();
+}
+
+
