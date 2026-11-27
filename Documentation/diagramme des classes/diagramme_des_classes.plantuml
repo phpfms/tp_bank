@@ -1,36 +1,58 @@
 @startuml
 
+' ==================== SINGLETON CONNEXION ====================
 class DatabaseConnection {
-    - static instance : DatabaseConnection
+    - {static} instance : DatabaseConnection
     - url : String
     - user : String
     - password : String
-
-    + static synchronized getInstance()
-    + executeRequest()
+    - DatabaseConnection()
+    + {static} getInstance() : DatabaseConnection
+    + executeRequest(requete : String) : ResultSet
 }
 
-class ClientDAO {
-    + creerClient()
-    + modifierClient()
-    + supprimerClient()
-    + rechercherClient()
+' ==================== INTERFACE DAO UNIQUE ====================
+interface IDao<T> {
+    + creer(entite : T) : void
+    + modifier(entite : T) : void
+    + supprimer(id : int) : void
+    + rechercher(id : int) : T
 }
 
-class CompteDAO {
-    + creerCompte()
-    + modifierCompte()
-    + supprimerCompte()
-    + rechercherCompte()
+' ==================== CLASSE INTERMEDIAIRE ====================
+class ReceiveRequest {
+    - connection : DatabaseConnection
+    + traiter(requete : String) : ResultSet
+    - afficherRequete(requete : String) : void
 }
 
-class OperationDAO {
-    + creerOperation()
-    + modifierOperation()
-    + annulerOperation()
-    + rechercherOperation()
+' ==================== IMPLEMENTATIONS DAO ====================
+class ClientDao implements IDao<Client> {
+    - handler : ReceiveRequest
+    + creer(client : Client) : void
+    + modifier(client : Client) : void
+    + supprimer(id : int) : void
+    + rechercher(id : int) : Client
 }
 
+class CompteDao implements IDao<Compte> {
+    - handler : ReceiveRequest
+    + creer(compte : Compte) : void
+    + modifier(compte : Compte) : void
+    + supprimer(id : int) : void
+    + rechercher(id : int) : Compte
+}
+
+class OperationDao implements IDao<Operation> {
+    - handler : ReceiveRequest
+    + creer(operation : Operation) : void
+    + modifier(operation : Operation) : void
+    + supprimer(id : int) : void
+    + rechercher(id : int) : Operation
+    + annulerOperation(id : int) : void
+}
+
+' ==================== ENTITES ====================
 class Client {
     - id : int
     - nom : String
@@ -56,27 +78,25 @@ class Operation {
     - montant : double
     - monnaie : String
     - supportMonetaire : String
+    + ajouterMontant(montant : double) : void
+    + retrancherMontant(montant : double) : void
 }
 
-' Relations métier
+' ==================== RELATIONS METIER ====================
+Client "1" -- "0..*" Compte : possede
+Compte "1" -- "0..*" Operation : enregistre
 
-Client "1" -- "*" Compte
-Compte "1" -- "*" Operation
+' ==================== DAO -> HANDLER ====================
+ClientDao --> ReceiveRequest : utilise
+CompteDao --> ReceiveRequest : utilise
+OperationDao --> ReceiveRequest : utilise
 
-' Singleton
+' ==================== HANDLER -> SINGLETON ====================
+ReceiveRequest --> DatabaseConnection : getInstance().executeRequest()
 
-DatabaseConnection --> DatabaseConnection : instance
-
-' DAO -> Connexion
-
-ClientDAO ..> DatabaseConnection
-CompteDAO ..> DatabaseConnection
-OperationDAO ..> DatabaseConnection
-
-' DAO -> Entités
-
-ClientDAO ..> Client
-CompteDAO ..> Compte
-OperationDAO ..> Operation
+' ==================== DAO -> ENTITES ====================
+ClientDao ..> Client
+CompteDao ..> Compte
+OperationDao ..> Operation
 
 @enduml
